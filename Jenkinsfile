@@ -22,7 +22,7 @@ pipeline {
         sh '''
           echo Ejecutando tests...
           # Siempre retornar éxito
-          exit 0
+          exit 1
         '''
       }
     }
