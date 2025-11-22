@@ -9,18 +9,18 @@ pipeline {
         )
         booleanParam(
             name: 'DO_BUILD',
-            defaultValue: true,
+            defaultValue: false,
             description: '¿Construir la imagen Docker?'
         )
         booleanParam(
             name: 'DO_PUSH',
-            defaultValue: true,
+            defaultValue: false,
             description: '¿Hacer push a DockerHub?'
         )
     }
 
     environment {
-        DOCKERHUB_USER = 'tuUsuarioDockerHub'
+        DOCKERHUB_USER = 'jearod17'
         IMAGE_NAME     = 'ceste-demo-app'
     }
 
