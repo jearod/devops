@@ -59,13 +59,12 @@ pipeline {
                 allOf {
                     expression { params.DO_PUSH }
                     expression { params.DO_BUILD }
-                    branch 'main'
                 }
             }
             steps {
                 sh """
                     echo "Subiendo imagen a DockerHub..."
-                    sudo docker push ${env.DOCKERHUB_USER}/${env.IMAGE_NAME}:${params.APP_VERSION}
+                    docker push ${env.DOCKERHUB_USER}/${env.IMAGE_NAME}:${params.APP_VERSION}
                 """
             }
         }
