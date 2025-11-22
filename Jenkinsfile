@@ -9,12 +9,12 @@ pipeline {
         )
         booleanParam(
             name: 'DO_BUILD',
-            defaultValue: True,
+            defaultValue: true,
             description: '¿Construir la imagen Docker?'
         )
         booleanParam(
             name: 'DO_PUSH',
-            defaultValue: True,
+            defaultValue: true,
             description: '¿Hacer push a DockerHub?'
         )
     }
