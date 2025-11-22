@@ -9,12 +9,12 @@ pipeline {
         )
         booleanParam(
             name: 'DO_BUILD',
-            defaultValue: false,
+            defaultValue: True,
             description: '¿Construir la imagen Docker?'
         )
         booleanParam(
             name: 'DO_PUSH',
-            defaultValue: false,
+            defaultValue: True,
             description: '¿Hacer push a DockerHub?'
         )
     }
@@ -49,7 +49,7 @@ pipeline {
             steps {
                 sh """
                     echo "Construyendo imagen Docker..."
-                    docker build -t ${env.DOCKERHUB_USER}/${env.IMAGE_NAME}:${params.APP_VERSION} .
+                    sudo docker build -t ${env.DOCKERHUB_USER}/${env.IMAGE_NAME}:${params.APP_VERSION} .
                 """
             }
         }
@@ -65,7 +65,7 @@ pipeline {
             steps {
                 sh """
                     echo "Subiendo imagen a DockerHub..."
-                    docker push ${env.DOCKERHUB_USER}/${env.IMAGE_NAME}:${params.APP_VERSION}
+                    sudo docker push ${env.DOCKERHUB_USER}/${env.IMAGE_NAME}:${params.APP_VERSION}
                 """
             }
         }
