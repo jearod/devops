@@ -1,54 +1,73 @@
 pipeline {
-  agent any
-  options { timestamps() }
+    agent any
 
-  stages {
-
-    stage('Checkout') {
-      steps {
-        checkout scm
-      }
+    parameters {
+        string(
+            name: 'APP_VERSION',
+            defaultValue: 'latest',
+            description: 'Versión/tag de la imagen Docker'
+        )
+        booleanParam(
+            name: 'DO_BUILD',
+            defaultValue: true,
+            description: '¿Construir la imagen Docker?'
+        )
+        booleanParam(
+            name: 'DO_PUSH',
+            defaultValue: true,
+            description: '¿Hacer push a DockerHub?'
+        )
     }
 
-    stage('Build') {
-      steps {
-        sh 'echo Compilando...'
-        sh 'ls -la'
-      }
+    environment {
+        DOCKERHUB_USER = 'tuUsuarioDockerHub'
+        IMAGE_NAME     = 'ceste-demo-app'
     }
 
-    stage('Test') {
-      steps {
-        sh '''
-          echo Ejecutando tests...
-          # Siempre retornar éxito
-          exit 1
-        '''
-      }
-    }
+    stages {
 
-    stage('Run script') {
-      steps {
-        sh 'bash scripts/hola.sh'
-      }
-    }
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
 
-    stage('Generate Artifact') {
-      steps {
-        sh 'echo "Resultado del build #${BUILD_NUMBER}" > build-${BUILD_NUMBER}.txt'
-      }
-    }
+        stage('Tests / Scripts') {
+            steps {
+                sh '''
+                    echo "Ejecutando tests de ejemplo..."
+                    sleep 2
+                    echo "Tests OK"
+                '''
+            }
+        }
 
-    stage('Archive') {
-      steps {
-        archiveArtifacts artifacts: "build-${env.BUILD_NUMBER}.txt", fingerprint: true
-      }
-    }
-  }
+        stage('Build Docker') {
+            when {
+                expression { params.DO_BUILD }
+            }
+            steps {
+                sh """
+                    echo "Construyendo imagen Docker..."
+                    docker build -t ${env.DOCKERHUB_USER}/${env.IMAGE_NAME}:${params.APP_VERSION} .
+                """
+            }
+        }
 
-  post {
-    success { echo '✅  Todo OK' }
-    failure { echo '❌  Algo falló' }
-  }
+        stage('Push DockerHub') {
+            when {
+                allOf {
+                    expression { params.DO_PUSH }
+                    expression { params.DO_BUILD }
+                    branch 'main'
+                }
+            }
+            steps {
+                sh """
+                    echo "Subiendo imagen a DockerHub..."
+                    docker push ${env.DOCKERHUB_USER}/${env.IMAGE_NAME}:${params.APP_VERSION}
+                """
+            }
+        }
+    }
 }
-
