@@ -49,7 +49,7 @@ pipeline {
             steps {
                 sh """
                     echo "Construyendo imagen Docker..."
-                    sudo docker build -t ${env.DOCKERHUB_USER}/${env.IMAGE_NAME}:${params.APP_VERSION} .
+                    docker build -t ${env.DOCKERHUB_USER}/${env.IMAGE_NAME}:${params.APP_VERSION} .
                 """
             }
         }
