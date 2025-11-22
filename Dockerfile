@@ -1,2 +1,2 @@
 FROM alpine
-["echo","Hello from Docker!"]
+CMD ["echo","Hello from Docker!"]
